@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 function Home() {
@@ -16,6 +17,8 @@ function Home() {
     <div>
       <h1>Bienvenue</h1>
       <button onClick={getRandomMovie}>Choisir un film</button>
+      <br />
+      <Link to="/search">Search Movies</Link>
     </div>
   );
 }
