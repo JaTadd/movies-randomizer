@@ -1,11 +1,12 @@
-// backend/server.js
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const userRoutes = require('./routes/user');
 const movieRoutes = require('./routes/movie');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 mongoose.connect('mongodb://localhost:27017/movieDB', {
   useNewUrlParser: true,

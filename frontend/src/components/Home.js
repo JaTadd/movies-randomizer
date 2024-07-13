@@ -1,11 +1,15 @@
-// frontend/src/components/Home.js
 import React from 'react';
 import axios from 'axios';
 
 function Home() {
   const getRandomMovie = async () => {
-    const response = await axios.get('/api/movies/random-movie');
-    alert(`Regardez ce film : ${response.data.title}`);
+    try {
+      const response = await axios.get('http://localhost:5000/api/movies/random-movie');
+      alert(`Regardez ce film : ${response.data.title}`);
+    } catch (error) {
+      console.error('Error fetching the movie:', error);
+      alert('Error fetching the movie');
+    }
   };
 
   return (
@@ -17,4 +21,3 @@ function Home() {
 }
 
 export default Home;
-

@@ -1,5 +1,3 @@
-// frontend/src/components/Login.js
-// frontend/src/components/Login.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -11,9 +9,14 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post('/api/users/login', { email, password });
-    localStorage.setItem('token', response.data.token);
-    navigate('/profile');
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
+      localStorage.setItem('token', response.data.token);
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error logging in:', error);
+      alert('Invalid credentials');
+    }
   };
 
   return (

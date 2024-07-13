@@ -1,4 +1,3 @@
-// frontend/src/components/Signup.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +9,13 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/api/users/signup', { email, password });
-    navigate('/login');
+    try {
+      await axios.post('http://localhost:5000/api/users/signup', { email, password });
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing up:', error);
+      alert('Error signing up');
+    }
   };
 
   return (

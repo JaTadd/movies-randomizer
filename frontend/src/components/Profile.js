@@ -1,4 +1,3 @@
-// frontend/src/components/Profile.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -8,7 +7,7 @@ function Profile() {
   useEffect(() => {
     const fetchMovies = async () => {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/movies/profile', {
+      const response = await axios.get('http://localhost:5000/api/movies/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMovies(response.data);
