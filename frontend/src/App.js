@@ -5,10 +5,12 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Profile from './components/Profile';
 import SearchMovies from './components/SearchMovies';
+import Header from './components/Header';  // Importer le Header
 
 function App() {
   return (
     <Router>
+      <Header />  {/* Inclure le Header */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

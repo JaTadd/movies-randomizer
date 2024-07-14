@@ -1,8 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
-  const token = req.header('Authorization').replace('Bearer ', '');
-  if (!token) return res.status(401).send('Access denied');
+  const authHeader = req.header('Authorization');
+  
+  if (!authHeader) {
+    return res.status(401).send('Access denied. No token provided.');
+  }
+
+  const token = authHeader.replace('Bearer ', '');
+  
+  if (!token) {
+    return res.status(401).send('Access denied. Invalid token format.');
+  }
 
   try {
     const decoded = jwt.verify(token, 'secret_key');

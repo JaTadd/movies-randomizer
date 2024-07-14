@@ -14,6 +14,17 @@ router.get('/search', async (req, res) => {
   res.json(movies);
 });
 
+// Route pour ajouter un film
+router.post('/add-movie', auth, async (req, res) => {
+  const { title, genre, year } = req.body;
+  if (!title || !genre || !year) {
+    return res.status(400).send('All fields are required');
+  }
+  const movie = new Movie({ title, genre, year });
+  await movie.save();
+  res.status(201).send('Movie added');
+});
+
 // Récupérer un film aléatoire
 router.get('/random-movie', async (req, res) => {
   const movies = await Movie.find();
