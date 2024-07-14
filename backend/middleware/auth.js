@@ -16,6 +16,7 @@ const auth = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, 'secret_key');
     req.userId = decoded.userId;
+    req.isAdmin = decoded.isAdmin; // Ajout de la vérification si l'utilisateur est admin
     next();
   } catch (err) {
     res.status(400).send('Invalid token');

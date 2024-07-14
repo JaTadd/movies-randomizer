@@ -2,6 +2,7 @@ const express = require('express');
 const Movie = require('../models/Movie');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const router = express.Router();
 
 // Route pour chercher des films
@@ -14,8 +15,8 @@ router.get('/search', async (req, res) => {
   res.json(movies);
 });
 
-// Route pour ajouter un film
-router.post('/add-movie', auth, async (req, res) => {
+// Route pour ajouter un film (réservée aux administrateurs)
+router.post('/add-movie', [auth, admin], async (req, res) => {
   const { title, genre, year } = req.body;
   if (!title || !genre || !year) {
     return res.status(400).send('All fields are required');
@@ -25,9 +26,17 @@ router.post('/add-movie', auth, async (req, res) => {
   res.status(201).send('Movie added');
 });
 
-// Récupérer un film aléatoire
-router.get('/random-movie', async (req, res) => {
-  const movies = await Movie.find();
+// Récupérer un film aléatoire sauf ceux que l'utilisateur a déjà vus
+router.get('/random-movie', auth, async (req, res) => {
+  const userId = req.userId;
+  const user = await User.findById(userId).populate('watchedMovies');
+  const watchedMovieIds = user.watchedMovies.map(movie => movie._id);
+  
+  const movies = await Movie.find({ _id: { $nin: watchedMovieIds } });
+  if (movies.length === 0) {
+    return res.status(404).send('No movies available');
+  }
+  
   const randomIndex = Math.floor(Math.random() * movies.length);
   res.json(movies[randomIndex]);
 });
@@ -51,6 +60,16 @@ router.post('/mark-as-watched', auth, async (req, res) => {
   }
 
   res.status(200).send('Movie marked as watched');
+});
+
+// Récupérer tous les films
+router.get('/all-movies', async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    res.json(movies);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
 });
 
 module.exports = router;
