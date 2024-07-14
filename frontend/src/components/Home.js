@@ -1,11 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 function Home() {
   const getRandomMovie = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/movies/random-movie');
+      const token = localStorage.getItem('token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await axios.get('http://localhost:5000/api/movies/random-movie', { headers });
+      console.log(response)
       alert(`Regardez ce film : ${response.data.title}`);
     } catch (error) {
       console.error('Error fetching the movie:', error);
@@ -17,6 +19,8 @@ function Home() {
     <div>
       <h1>Bienvenue</h1>
       <button onClick={getRandomMovie}>Choisir un film</button>
+      <br />
+      <a href="/search">Search Movies</a>
     </div>
   );
 }
