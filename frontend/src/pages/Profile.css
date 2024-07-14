@@ -1,0 +1,19 @@
+.profile-container {
+    max-width: 100vw; 
+    padding: 20px; 
+    box-sizing: border-box; 
+  }
+  
+  .movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    grid-auto-rows: minmax(100px, auto); 
+    gap: 20px; 
+  }
+  
+  @media (max-width: 600px) {
+    .movies-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+    }
+  }
+  

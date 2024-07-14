@@ -1,5 +1,7 @@
+// src/SearchMovies.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import CardSearch from '../components/CardSearch';
 
 function SearchMovies() {
   const [title, setTitle] = useState('');
@@ -18,11 +20,16 @@ function SearchMovies() {
 
   const markAsWatched = async (movieId) => {
     const token = localStorage.getItem('token');
-    await axios.post('http://localhost:5000/api/movies/mark-as-watched', 
-      { movieId }, 
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    alert('Movie marked as watched');
+    try {
+      await axios.post('http://localhost:5000/api/movies/mark-as-watched', 
+        { movieId }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('Movie marked as watched');
+    } catch (error) {
+      console.error('Error marking movie as watched:', error);
+      alert('Error marking movie as watched');
+    }
   };
 
   return (
@@ -38,14 +45,15 @@ function SearchMovies() {
         />
         <button type="submit">Search</button>
       </form>
-      <ul>
-        {movies.map(movie => (
-          <li key={movie._id}>
-            {movie.title} ({movie.year})
-            <button onClick={() => markAsWatched(movie._id)}>Mark as Watched</button>
-          </li>
+      <div className="movies-grid">
+        {movies.map((movie) => (
+          <CardSearch 
+            key={movie._id}
+            movie={movie}
+            markAsWatched={markAsWatched}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
