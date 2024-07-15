@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken'); // Assurez-vous que jwt est importé
 const Movie = require('../models/Movie');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
@@ -26,19 +27,38 @@ router.post('/add-movie', [auth, admin], async (req, res) => {
   res.status(201).send('Movie added');
 });
 
-// Récupérer un film aléatoire sauf ceux que l'utilisateur a déjà vus
-router.get('/random-movie', auth, async (req, res) => {
-  const userId = req.userId;
-  const user = await User.findById(userId).populate('watchedMovies');
-  const watchedMovieIds = user.watchedMovies.map(movie => movie._id);
-  
-  const movies = await Movie.find({ _id: { $nin: watchedMovieIds } });
-  if (movies.length === 0) {
-    return res.status(404).send('No movies available');
+// Récupérer un film aléatoire pour les utilisateurs connectés
+router.get('/random-movie-auth', auth, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId).populate('watchedMovies');
+    const watchedMovieIds = user.watchedMovies.map(movie => movie._id);
+    
+    const movies = await Movie.find({ _id: { $nin: watchedMovieIds } });
+    if (movies.length === 0) {
+      return res.status(404).send('No movies available');
+    }
+    
+    const randomIndex = Math.floor(Math.random() * movies.length);
+    res.json(movies[randomIndex]);
+  } catch (error) {
+    res.status(500).send('Server error');
   }
-  
-  const randomIndex = Math.floor(Math.random() * movies.length);
-  res.json(movies[randomIndex]);
+});
+
+// Récupérer un film aléatoire pour les utilisateurs non connectés
+router.get('/random-movie', async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    if (movies.length === 0) {
+      return res.status(404).send('No movies available');
+    }
+    
+    const randomIndex = Math.floor(Math.random() * movies.length);
+    res.json(movies[randomIndex]);
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
 });
 
 // Récupérer les films vus par l'utilisateur
