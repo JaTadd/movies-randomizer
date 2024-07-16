@@ -18,11 +18,11 @@ router.get('/search', async (req, res) => {
 
 // Route pour ajouter un film (réservée aux administrateurs)
 router.post('/add-movie', [auth, admin], async (req, res) => {
-  const { title, genre, year } = req.body;
+  const { title, genre, year, image } = req.body; // Inclure image
   if (!title || !genre || !year) {
     return res.status(400).send('All fields are required');
   }
-  const movie = new Movie({ title, genre, year });
+  const movie = new Movie({ title, genre, year, image }); // Ajouter image
   await movie.save();
   res.status(201).send('Movie added');
 });
@@ -68,7 +68,7 @@ router.get('/profile', auth, async (req, res) => {
   res.json(user.watchedMovies);
 });
 
-// Marquer un film comme vu
+// Route pour marquer un film comme vu
 router.post('/mark-as-watched', auth, async (req, res) => {
   const { movieId } = req.body;
   const userId = req.userId;
@@ -77,9 +77,26 @@ router.post('/mark-as-watched', auth, async (req, res) => {
   if (!user.watchedMovies.includes(movieId)) {
     user.watchedMovies.push(movieId);
     await user.save();
+    res.status(200).send('Movie marked as watched');
+  } else {
+    res.status(400).send('Movie already marked as watched');
   }
+});
 
-  res.status(200).send('Movie marked as watched');
+// Route pour retirer un film de la liste des films vus
+router.post('/remove-from-watched', auth, async (req, res) => {
+  const { movieId } = req.body;
+  const userId = req.userId;
+
+  const user = await User.findById(userId);
+  const index = user.watchedMovies.indexOf(movieId);
+  if (index > -1) {
+    user.watchedMovies.splice(index, 1);
+    await user.save();
+    res.status(200).send('Movie removed from watched list');
+  } else {
+    res.status(400).send('Movie not found in watched list');
+  }
 });
 
 // Récupérer tous les films

@@ -6,9 +6,18 @@ import './Header.css';
 function Header() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  const username = localStorage.getItem('username'); // Récupérer le username
+  console.log(username)
+
+
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('isAdmin');
+    localStorage.removeItem('username'); // Supprimer le username
+
     navigate('/');
   };
 
@@ -27,7 +36,8 @@ function Header() {
             </>
           ) : (
             <>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile">{username}</Link> {/* Afficher et lier le username */}
+              {isAdmin && <Link to="/admin">Admin</Link>}  {/* Lien vers Admin */}
               <button onClick={handleLogout}>Logout</button>
             </>
           )}

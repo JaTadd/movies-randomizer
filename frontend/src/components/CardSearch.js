@@ -1,8 +1,7 @@
-// src/components/CardSearch.js
 import React from 'react';
 import './CardSearch.css'; 
 
-function CardSearch({ movie, markAsWatched }) {
+function CardSearch({ movie, markAsWatched, removeFromWatched, isWatched }) {
   if (!movie) return null; 
 
   return (
@@ -14,8 +13,11 @@ function CardSearch({ movie, markAsWatched }) {
           {movie.genre} - {movie.year}
         </p>
         <div className="card-profile-actions">
-          <button onClick={() => console.log('Add to watchlist', movie.title)}>Ajouter à la watchlist</button>
-          <button onClick={() => markAsWatched(movie._id)}>Déjà vu</button>
+          {isWatched ? (
+            <button onClick={() => removeFromWatched(movie._id)}>Retirer de la liste</button>
+          ) : (
+            <button onClick={() => markAsWatched(movie._id)}>Déjà vu</button>
+          )}
         </div>
       </div>
     </div>

@@ -14,6 +14,8 @@ function Login() {
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('isAdmin', response.data.isAdmin);
+      localStorage.setItem('username', response.data.username); // Stocker le username
       navigate('/profile');
     } catch (error) {
       console.error('Error logging in:', error);

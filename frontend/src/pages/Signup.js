@@ -4,14 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 function Signup() {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/users/signup', { email, password });
+      await axios.post('http://localhost:5000/api/users/signup', { username, email, password });
       navigate('/login');
     } catch (error) {
       console.error('Error signing up:', error);
@@ -23,6 +25,14 @@ function Signup() {
     <div className="signup-container">
       <form onSubmit={handleSubmit} className="signup-form">
         <h2>Sign Up</h2>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+          required
+          className="signup-input"
+        />
         <input
           type="email"
           value={email}

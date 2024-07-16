@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import SearchMovies from './pages/SearchMovies';
+import AdminPage from './pages/AdminPage';
 import Header from './components/Header';  // Importer le Header
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<SearchMovies />} />
+        <Route path="/admin" element={<AdminPage />} />  
       </Routes>
     </Router>
   );

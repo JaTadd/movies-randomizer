@@ -30,13 +30,15 @@ function Profile() {
   const handleDelete = async (movie) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/movies/${movie._id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.post('http://localhost:5000/api/movies/remove-from-watched', 
+        { movieId: movie._id }, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setMovies(movies.filter(m => m._id !== movie._id));  // Remove the movie from the list
+      alert('Movie removed from watched list');
     } catch (err) {
-      console.error('Failed to delete movie:', err);
-      // Optionally handle the error, e.g., show an error message
+      console.error('Failed to remove movie from watched list:', err);
+      alert('Failed to remove movie from watched list');
     }
   };
 
@@ -51,14 +53,12 @@ function Profile() {
           <CardProfile 
             key={movie._id}
             movie={movie}
-            onDelete={() => handleDelete(movie)}
+            onDelete={handleDelete}
           />
         ))}
       </div>
     </div>
   );
 }
-
-
 
 export default Profile;
