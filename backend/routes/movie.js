@@ -34,14 +34,19 @@ router.get('/random-movie-auth', auth, async (req, res) => {
     const user = await User.findById(userId).populate('watchedMovies');
     const watchedMovieIds = user.watchedMovies.map(movie => movie._id);
     
-    const movies = await Movie.find({ _id: { $nin: watchedMovieIds } });
+    // Utiliser l'agrégation pour échantillonner un film aléatoire qui n'est pas dans watchedMovies
+    const movies = await Movie.aggregate([
+      { $match: { _id: { $nin: watchedMovieIds } } },
+      { $sample: { size: 1 } }
+    ]);
+    
     if (movies.length === 0) {
       return res.status(404).send('No movies available');
     }
     
-    const randomIndex = Math.floor(Math.random() * movies.length);
-    res.json(movies[randomIndex]);
+    res.json(movies[0]);
   } catch (error) {
+    console.error('Server error:', error);
     res.status(500).send('Server error');
   }
 });
@@ -49,18 +54,21 @@ router.get('/random-movie-auth', auth, async (req, res) => {
 // Récupérer un film aléatoire pour les utilisateurs non connectés
 router.get('/random-movie', async (req, res) => {
   try {
-    const movies = await Movie.find();
+    // Utiliser l'agrégation pour échantillonner un film aléatoire
+    const movies = await Movie.aggregate([
+      { $sample: { size: 1 } }
+    ]);
+
     if (movies.length === 0) {
       return res.status(404).send('No movies available');
     }
     
-    const randomIndex = Math.floor(Math.random() * movies.length);
-    res.json(movies[randomIndex]);
+    res.json(movies[0]);
   } catch (error) {
+    console.error('Server error:', error);
     res.status(500).send('Server error');
   }
 });
-
 // Récupérer les films vus par l'utilisateur
 router.get('/profile', auth, async (req, res) => {
   const userId = req.userId;
