@@ -1,12 +1,68 @@
-//src/pages/Home.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+
+const genresOptions = [
+  { value: 'Reality-TV', label: 'Reality-TV' },
+  { value: 'Animation', label: 'Animation' },
+  { value: 'Adventure', label: 'Adventure' },
+  { value: 'Sci-Fi', label: 'Sci-Fi' },
+  { value: 'Family', label: 'Family' },
+  { value: 'Horror', label: 'Horror' },
+  { value: '\\N', label: '\\N' },
+  { value: 'Music', label: 'Music' },
+  { value: 'Western', label: 'Western' },
+  { value: 'Film-Noir', label: 'Film-Noir' },
+  { value: 'Drama', label: 'Drama' },
+  { value: 'Comedy', label: 'Comedy' },
+  { value: 'Game-Show', label: 'Game-Show' },
+  { value: 'Documentary', label: 'Documentary' },
+  { value: 'Romance', label: 'Romance' },
+  { value: 'War', label: 'War' },
+  { value: 'Biography', label: 'Biography' },
+  { value: 'Crime', label: 'Crime' },
+  { value: 'Adult', label: 'Adult' },
+  { value: 'News', label: 'News' },
+  { value: 'Short', label: 'Short' },
+  { value: 'History', label: 'History' },
+  { value: 'Musical', label: 'Musical' },
+  { value: 'Action', label: 'Action' },
+  { value: 'Thriller', label: 'Thriller' },
+  { value: 'Fantasy', label: 'Fantasy' },
+  { value: 'Sport', label: 'Sport' },
+  { value: 'Mystery', label: 'Mystery' },
+  { value: 'Talk-Show', label: 'Talk-Show' }
+];
+
+const ratingOptions = [
+  { value: 0, label: '0' },
+  { value: 1, label: '1' },
+  { value: 2, label: '2' },
+  { value: 3, label: '3' },
+  { value: 4, label: '4' },
+  { value: 5, label: '5' },
+  { value: 6, label: '6' },
+  { value: 7, label: '7' },
+  { value: 8, label: '8' },
+  { value: 9, label: '9' },
+];
+
+const popularityOptions = [
+  { value: 0, label: 'Mini banana' },
+  { value: 800, label: 'Lil banana' },
+  { value: 1500, label: 'Mid banana' },
+  { value: 3500, label: 'Big banana' },
+  { value: 300000, label: 'Gozibanana' }
+];
 
 function Home() {
   const [movie, setMovie] = useState(null);
   const [watchedMovies, setWatchedMovies] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [selectedPopularity, setSelectedPopularity] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +80,10 @@ function Home() {
 
   const getRandomMovie = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/movies/random-movie');
+      const genres = selectedGenres.map(genre => genre.value).join(',');
+      const rating = selectedRating ? selectedRating.value : '';
+      const popularity = selectedPopularity ? selectedPopularity.value : '';
+      const response = await axios.get(`http://localhost:5000/api/movies/random-movie?genres=${genres}&rating=${rating}&popularity=${popularity}`);
       setMovie(response.data);
     } catch (error) {
       console.error('Error fetching the movie:', error);
@@ -73,13 +132,38 @@ function Home() {
   return (
     <div>
       <h1>Bienvenue</h1>
+      <Select
+        isMulti
+        name="genres"
+        options={genresOptions}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        onChange={setSelectedGenres}
+        placeholder="Sélectionner des genres"
+      />
+      <Select
+        name="rating"
+        options={ratingOptions}
+        className="basic-single-select"
+        classNamePrefix="select"
+        onChange={setSelectedRating}
+        placeholder="Sélectionner une note minimale"
+      />
+      <Select
+        name="popularity"
+        options={popularityOptions}
+        className="basic-single-select"
+        classNamePrefix="select"
+        onChange={setSelectedPopularity}
+        placeholder="Sélectionner une popularité"
+      />
       <button onClick={getRandomMovie}>Choisir un film</button>
 
       {movie && (
         <Card 
           title={movie.title} 
           year={movie.year} 
-          genre={movie.genre} 
+          genre={movie.genres.join(', ')} 
           image={movie.image}
           isWatched={watchedMovies.some(watchedMovie => watchedMovie._id === movie._id)}
           onMarkAsWatched={() => markAsWatched(movie._id)}
