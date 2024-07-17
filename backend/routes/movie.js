@@ -12,8 +12,17 @@ router.get('/search', async (req, res) => {
   if (!title) {
     return res.status(400).send('Title is required');
   }
-  const movies = await Movie.find({ title: new RegExp(title, 'i') }); // recherche insensible à la casse
-  res.json(movies);
+  
+  try {
+    const movies = await Movie.find({ title: new RegExp(title, 'i') })
+                              .sort({ NumVotes: -1 }) // Trie par NumVotes décroissant
+                              .limit(50); // Limite les résultats à 50 films pour améliorer la performance
+    
+    res.json(movies);
+  } catch (error) {
+    console.error('Error searching for movies:', error);
+    res.status(500).send('Server error');
+  }
 });
 
 // Route pour ajouter un film (réservée aux administrateurs)
