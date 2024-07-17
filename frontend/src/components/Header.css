@@ -1,38 +1,45 @@
 /* src/components/Header.css */
 header {
-    background-color: #333;
-    padding: 10px 20px;
-    color: white;
-  }
-  
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  nav a, nav button {
-    color: white;
-    text-decoration: none;
-    margin: 0 10px;
-    font-size: 16px;
-  }
-  
-  nav button {
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  nav button:hover, nav a:hover {
-    text-decoration: underline;
-  }
-  
-  .nav-left {
-    display: flex;
-  }
-  
-  .nav-right {
-    display: flex;
-  }
-  
+  background-color: #333;
+  padding: 20px 40px; /* Augmenter le padding pour donner plus de place au header */
+  color: white;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a, nav button {
+  color: white;
+  text-decoration: none;
+  margin: 0 20px; /* Augmenter la marge entre les éléments de navigation */
+  font-size: 20px; /* Augmenter la taille des écritures */
+}
+
+nav button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+nav button:hover, nav a:hover {
+  text-decoration: underline;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center; /* Alignement centré pour l'icône et les liens */
+}
+
+.nav-right {
+  display: flex;
+  align-items: center; /* Alignement centré pour les liens et le bouton */
+}
+
+.nav-left img {
+  height: 40px; /* Augmenter la taille de l'image */
+  width: 40px; /* Augmenter la taille de l'image */
+  margin-right: 20px; /* Augmenter l'espace autour de l'image */
+}

@@ -8,11 +8,12 @@ import SearchMovies from "./pages/SearchMovies";
 import AdminPage from "./pages/AdminPage";
 import Header from "./components/Header";
 import ChatSlider from "./components/ChatSlider";
+import "./App.css";
 
 function App() {
   return (
     <Router>
-      <Header /> {/* Inclure le Header */}
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
