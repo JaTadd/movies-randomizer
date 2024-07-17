@@ -36,6 +36,22 @@ router.post('/add-movie', [auth, admin], async (req, res) => {
   res.status(201).send('Movie added');
 });
 
+// Fonction pour obtenir le filtre de popularité
+const getPopularityFilter = (popularity) => {
+  switch (parseInt(popularity, 10)) {
+    case 800:
+      return { NumVotes: { $gte: 800 } };
+    case 1500:
+      return { NumVotes: { $gte: 1500 } };
+    case 3500:
+      return { NumVotes: { $gte: 3500 } };
+    case 300000:
+      return { NumVotes: { $gte: 300000 } };
+    default:
+      return {};
+  }
+};
+
 // Récupérer un film aléatoire pour les utilisateurs connectés
 router.get('/random-movie-auth', auth, async (req, res) => {
   try {
@@ -43,9 +59,23 @@ router.get('/random-movie-auth', auth, async (req, res) => {
     const user = await User.findById(userId).populate('watchedMovies');
     const watchedMovieIds = user.watchedMovies.map(movie => movie._id);
     
+    // Filtrer par genres, note et popularité si spécifiés
+    const genres = req.query.genres ? req.query.genres.split(',') : [];
+    const rating = req.query.rating ? parseInt(req.query.rating, 10) : 0;
+    const popularityFilter = getPopularityFilter(req.query.popularity);
+    
+    const match = { 
+      _id: { $nin: watchedMovieIds },
+      IMDBRating: { $gte: rating },
+      ...popularityFilter
+    };
+    if (genres.length) {
+      match.genres = { $in: genres };
+    }
+    
     // Utiliser l'agrégation pour échantillonner un film aléatoire qui n'est pas dans watchedMovies
     const movies = await Movie.aggregate([
-      { $match: { _id: { $nin: watchedMovieIds } } },
+      { $match: match },
       { $sample: { size: 1 } }
     ]);
     
@@ -63,8 +93,22 @@ router.get('/random-movie-auth', auth, async (req, res) => {
 // Récupérer un film aléatoire pour les utilisateurs non connectés
 router.get('/random-movie', async (req, res) => {
   try {
+    // Filtrer par genres, note et popularité si spécifiés
+    const genres = req.query.genres ? req.query.genres.split(',') : [];
+    const rating = req.query.rating ? parseInt(req.query.rating, 10) : 0;
+    const popularityFilter = getPopularityFilter(req.query.popularity);
+
+    const match = { 
+      IMDBRating: { $gte: rating },
+      ...popularityFilter
+    };
+    if (genres.length) {
+      match.genres = { $in: genres };
+    }
+
     // Utiliser l'agrégation pour échantillonner un film aléatoire
     const movies = await Movie.aggregate([
+      { $match: match },
       { $sample: { size: 1 } }
     ]);
 
@@ -78,6 +122,8 @@ router.get('/random-movie', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+
 // Récupérer les films vus par l'utilisateur
 router.get('/profile', auth, async (req, res) => {
   const userId = req.userId;
