@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CardSearch from "../components/CardSearch";
+import './SearchMovies.css';
 
 function SearchMovies() {
   const [title, setTitle] = useState("");
@@ -25,8 +26,12 @@ function SearchMovies() {
     fetchWatchedMovies();
   }, []);
 
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
   const handleSearch = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
       const response = await axios.get(
         `http://localhost:5000/api/movies/search?title=${title}`
@@ -34,7 +39,7 @@ function SearchMovies() {
       setMovies(response.data);
     } catch (error) {
       console.error("Error searching for movies:", error);
-      alert("Error searching for movies");
+      //alert("Error searching for movies");
     }
   };
 
@@ -51,10 +56,10 @@ function SearchMovies() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies([...watchedMovies, { _id: movieId }]);
-      alert("Movie marked as watched");
+      // alert("Movie marked as watched");
     } catch (error) {
       console.error("Error marking movie as watched:", error);
-      alert("Error marking movie as watched");
+      //alert("Error marking movie as watched");
     }
   };
 
@@ -71,25 +76,26 @@ function SearchMovies() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies(watchedMovies.filter((movie) => movie._id !== movieId));
-      alert("Movie removed from watched list");
+      //alert("Movie removed from watched list");
     } catch (error) {
       console.error("Error removing movie from watched list:", error);
-      alert("Error removing movie from watched list");
+      //alert("Error removing movie from watched list");
     }
   };
 
   return (
-    <div>
+    <div className="search-movies-container">
       <h1>Search Movies</h1>
-      <form onSubmit={handleSearch}>
+      <form onSubmit={handleSearch} className="search-form">
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Search by title"
+          className="search-input"
           required
         />
-        <button type="submit">Search</button>
+        <button type="submit" className="search-button">Search</button>
       </form>
       <div className="movies-grid">
         {movies.map((movie) => (

@@ -3,6 +3,8 @@ import axios from 'axios';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import './Home.css';
+
 
 const genresOptions = [
   { value: 'Reality-TV', label: 'Reality-TV' },
@@ -87,7 +89,7 @@ function Home() {
       setMovie(response.data);
     } catch (error) {
       console.error('Error fetching the movie:', error);
-      alert('Error fetching the movie');
+      //alert('Error fetching the movie');
     }
   };
 
@@ -103,10 +105,10 @@ function Home() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies([...watchedMovies, { _id: movieId }]);
-      alert('Movie marked as watched');
+      //alert('Movie marked as watched');
     } catch (error) {
       console.error('Error marking movie as watched:', error);
-      alert('Error marking movie as watched');
+      //alert('Error marking movie as watched');
     }
   };
 
@@ -122,53 +124,57 @@ function Home() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies(watchedMovies.filter(movie => movie._id !== movieId));
-      alert('Movie removed from watched list');
+      //alert('Movie removed from watched list');
     } catch (error) {
       console.error('Error removing movie from watched list:', error);
-      alert('Error removing movie from watched list');
+      //alert('Error removing movie from watched list');
     }
   };
 
   return (
-    <div>
-      <h1>Bienvenue</h1>
-      <Select
-        isMulti
-        name="genres"
-        options={genresOptions}
-        className="basic-multi-select"
-        classNamePrefix="select"
-        onChange={setSelectedGenres}
-        placeholder="Sélectionner des genres"
-      />
-      <Select
-        name="rating"
-        options={ratingOptions}
-        className="basic-single-select"
-        classNamePrefix="select"
-        onChange={setSelectedRating}
-        placeholder="Sélectionner une note minimale"
-      />
-      <Select
-        name="popularity"
-        options={popularityOptions}
-        className="basic-single-select"
-        classNamePrefix="select"
-        onChange={setSelectedPopularity}
-        placeholder="Sélectionner une popularité"
-      />
-      <button onClick={getRandomMovie}>Choisir un film</button>
-
-      {movie && (
-        <Card 
-          title={movie.title} 
-          year={movie.year} 
-          genre={movie.genres.join(', ')} 
-          image={movie.image}
-          isWatched={watchedMovies.some(watchedMovie => watchedMovie._id === movie._id)}
-          onMarkAsWatched={() => markAsWatched(movie._id)}
-          onRemoveFromWatched={() => removeFromWatched(movie._id)}
+    <div className="home-container">
+      <h1>Bienvenue sur BananaFlix</h1>
+      <div className="select-container">
+        <Select
+          isMulti
+          name="genres"
+          options={genresOptions}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          onChange={setSelectedGenres}
+          placeholder="Sélectionner des genres"
         />
+        <Select
+          name="rating"
+          options={ratingOptions}
+          className="basic-single-select"
+          classNamePrefix="select"
+          onChange={setSelectedRating}
+          placeholder="Sélectionner une note minimale"
+        />
+        <Select
+          name="popularity"
+          options={popularityOptions}
+          className="basic-single-select"
+          classNamePrefix="select"
+          onChange={setSelectedPopularity}
+          placeholder="Sélectionner une popularité"
+        />
+        <button className="select-button" onClick={getRandomMovie}>Choisir un film</button>
+      </div>
+      
+      {movie && (
+        <div className="movie-card-container">
+          <Card 
+            title={movie.title} 
+            year={movie.year} 
+            genre={movie.genres.join(', ')} 
+            image={movie.image}
+            isWatched={watchedMovies.some(watchedMovie => watchedMovie._id === movie._id)}
+            onMarkAsWatched={() => markAsWatched(movie._id)}
+            onRemoveFromWatched={() => removeFromWatched(movie._id)}
+          />
+        </div>
       )}
     </div>
   );
