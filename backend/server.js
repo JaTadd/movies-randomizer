@@ -1,3 +1,4 @@
+require("dotenv").config(); // Charger les variables d'environnement
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -11,22 +12,25 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5000",
     methods: ["GET", "POST"],
   },
 });
 
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// Connexion à la base de données MongoDB
+// Connexion à la base de données MongoDB Atlas
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/movieDB"; // Fallback pour dev local
+
 mongoose
-  .connect("mongodb://localhost:27017/movieDB", {
+  .connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+  .then(() => console.log("Connexion à MongoDB réussie"))
+  .catch((err) => console.error("Erreur de connexion à MongoDB :", err));
 
 // Utilisation des routes
 app.use("/api/users", userRoutes);
@@ -35,7 +39,7 @@ app.use("/api/movies", movieRoutes);
 // Stockage de l'historique des messages
 let messageHistory = [];
 
-// Gestion connexion socket
+// Gestion des connexions socket
 io.on("connection", (socket) => {
   console.log("New client connected:", socket.id);
 
@@ -54,6 +58,8 @@ io.on("connection", (socket) => {
 });
 
 // Démarrage du serveur
-server.listen(5000, () => {
-  console.log("Server is running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
