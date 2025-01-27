@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test:integration": "node tests/integration"
+    "test:integration": "for file in test/integration/*.js; do node $file || exit 1; done"
   },
   "devDependencies": {
     "jest": "^29.7.0"
