@@ -1,4 +1,4 @@
-name: Push to Staging Branch
+name: Push to Staging
 
 on:
   push:
@@ -10,17 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Configure Git
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
+      - name: Fetch all branches
+        run: |
+          git fetch origin
 
-    - name: Push to Staging
-      run: |
-        git fetch origin
-        git checkout staging || git checkout -b staging
-        git merge --no-ff dev -m "Auto-merge from dev to staging"
-        git push origin staging
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Checkout staging branch
+        run: |
+          git checkout staging || git checkout -b staging
+
+      - name: Merge dev into staging (resolve conflicts)
+        run: |
+          git merge origin/dev --allow-unrelated-histories || true
+          git merge --strategy-option theirs || true # Accepte tous les changements de dev
+          git commit -m "Resolve conflicts by accepting dev changes" || true
+
+      - name: Push to staging
+        run: |
+          git push origin staging
