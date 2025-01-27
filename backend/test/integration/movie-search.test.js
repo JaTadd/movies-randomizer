@@ -10,10 +10,9 @@ server.listen(0, () => { // 0 permet d'attribuer un port libre automatiquement
 });
 
 afterAll(async () => {
-    await mongoose.connection.close(); // Fermez MongoDB
-    server.close(() => {
-        console.log('Test server stopped');
-    });
+  await mongoose.connection.close(); // Fermez MongoDB proprement
+  await new Promise((resolve) => server.close(resolve)); // Assurez-vous que le serveur est complètement arrêté
+  console.log('Test server stopped'); // Ce log ne devrait plus poser problème
 });
 
 describe('Movie Search Route', () => {
