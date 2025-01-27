@@ -3,16 +3,16 @@ const { app, server } = require('../../server'); // Importer app et server
 const mongoose = require('mongoose');
 
 beforeAll((done) => {
-server.listen(0, () => { // 0 permet d'attribuer un port libre automatiquement
+server.listen(0, () => { 
     console.log(`Test server started on port ${server.address().port}`);
     done();
   });
 });
 
 afterAll(async () => {
-  await mongoose.connection.close(); // Fermez MongoDB proprement
-  await new Promise((resolve) => server.close(resolve)); // Assurez-vous que le serveur est complètement arrêté
-  console.log('Test server stopped'); // Ce log ne devrait plus poser problème
+  await mongoose.connection.close(); 
+  await new Promise((resolve) => server.close(resolve)); 
+  console.log('Test server stopped'); 
 });
 
 describe('Movie Search Route', () => {
