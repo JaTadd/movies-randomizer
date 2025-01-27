@@ -14,8 +14,8 @@ const seedMovies = async () => {
 
     // Ajouter des films à la base de données
     const movies = [
-      { title: 'Inception', genres: ['Sci-Fi'], year: 2010, IMDBRating: 8.8, NumVotes: 1000000 },
-      { title: 'Interstellar', genres: ['Sci-Fi', 'Drama'], year: 2014, IMDBRating: 8.6, NumVotes: 900000 },
+      { title: 'Inception', genres: ['Sci-Fi'], year: 2010, IMDBRating: 8.8, NumVotes: 16540 },
+      { title: 'Interstellar', genres: ['Sci-Fi', 'Drama'], year: 2014, IMDBRating: 8.6, NumVotes: 1420 },
     ];
 
     await Movie.insertMany(movies);
