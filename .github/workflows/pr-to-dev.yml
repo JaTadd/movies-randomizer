@@ -1,0 +1,57 @@
+name: Pull Request to Dev
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Backend Setup and Tests
+    - name: Setup Node.js for Backend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies for Backend
+      run: |
+        cd backend
+        npm install
+
+    - name: Run Backend Integration Tests
+      run: |
+        cd backend
+        npx jest tests/integration
+
+    # Frontend Setup and Tests
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies for Frontend
+      run: |
+        cd frontend
+        npm install
+
+    - name: Run Frontend Tests
+      run: |
+        cd frontend
+        npm test
