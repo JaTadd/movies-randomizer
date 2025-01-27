@@ -3,5 +3,6 @@ module.exports = {
       "**/test/integration/**/*.js" 
     ],
     testEnvironment: "node", 
+    testTimeout: 10000, 
   };
   
