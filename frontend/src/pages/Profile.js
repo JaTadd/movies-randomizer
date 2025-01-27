@@ -4,10 +4,12 @@ import './Profile.css';
 import CardProfile from '../components/CardProfile';
 
 function Profile() {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState([]); // Films vus par l'utilisateur
+  const [recommendations, setRecommendations] = useState([]); // Films recommandés
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Charger les films vus par l'utilisateur
   useEffect(() => {
     const fetchMovies = async () => {
       setLoading(true);
@@ -27,6 +29,24 @@ function Profile() {
     fetchMovies();
   }, []);
 
+  // Charger les recommandations
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      if (movies.length === 0) return; // Pas de films vus, pas de recommandations
+      const token = localStorage.getItem('token');
+      try {
+        const response = await axios.get('http://localhost:5000/api/movies/recommendations', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setRecommendations(response.data); // Enregistrer les recommandations
+      } catch (err) {
+        console.error('Failed to fetch recommendations:', err);
+        setError(err);
+      }
+    };
+    fetchRecommendations();
+  }, [movies]); // Appeler fetchRecommendations dès que les films vus sont chargés
+
   const handleDelete = async (movie) => {
     try {
       const token = localStorage.getItem('token');
@@ -34,7 +54,7 @@ function Profile() {
         { movieId: movie._id }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setMovies(movies.filter(m => m._id !== movie._id));  // Remove the movie from the list
+      setMovies(movies.filter(m => m._id !== movie._id));  // Supprimer le film de la liste
       alert('Movie removed from watched list');
     } catch (err) {
       console.error('Failed to remove movie from watched list:', err);
@@ -57,6 +77,19 @@ function Profile() {
           />
         ))}
       </div>
+
+      <h2>Recommandations pour vous</h2>
+      {recommendations.length > 0 ? (
+        <div className="movies-grid">
+          {recommendations.map((movieTitle, index) => (
+            <div key={index} className="recommended-movie">
+              {movieTitle}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>Aucune recommandation pour le moment.</p>
+      )}
     </div>
   );
 }

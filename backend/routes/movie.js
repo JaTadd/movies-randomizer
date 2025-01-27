@@ -5,6 +5,14 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const router = express.Router();
+const { PythonShell } = require('python-shell');
+const path = require('path');
+
+
+const modelPath = path.resolve(__dirname, '../ml_models/content_based_model.pkl');
+const tfidfPath = path.resolve(__dirname, '../ml_models/tfidf_vectorizer.pkl');
+
+
 
 // Route pour chercher des films
 router.get('/search', async (req, res) => {
@@ -169,6 +177,47 @@ router.get('/all-movies', async (req, res) => {
     res.json(movies);
   } catch (err) {
     res.status(500).send('Server error');
+  }
+});
+
+
+router.get('/recommendations', auth, async (req, res) => {
+  try {
+    const userId = req.userId;
+    
+    // Récupérer les films vus par l'utilisateur
+    const user = await User.findById(userId).populate('watchedMovies');
+    const watchedMovies = user.watchedMovies;
+
+    if (!watchedMovies || watchedMovies.length === 0) {
+      return res.status(400).json({ message: 'Ajoutez un film pour avoir des recommandations' });
+    }
+
+    // Préparer les titres des films vus
+    const watchedTitles = watchedMovies.map((movie) => movie.title);
+
+    // Appeler le script Python pour générer des recommandations
+    const options = {
+      args: [
+        JSON.stringify(watchedTitles),
+        modelPath,
+        tfidfPath
+      ]
+    };
+
+    PythonShell.run('./ml_models/recommendation_script.py', options, (err, results) => {
+      if (err) {
+        console.error('Erreur lors de l\'exécution du script Python :', err);
+        return res.status(500).json({ message: 'Erreur lors de la génération des recommandations.' });
+      }
+
+      // Retourner les recommandations au client
+      const recommendations = JSON.parse(results[0]);
+      res.json(recommendations);
+    });
+  } catch (err) {
+    console.error('Erreur dans la route /recommendations :', err);
+    res.status(500).json({ message: 'Erreur interne du serveur.' });
   }
 });
 
