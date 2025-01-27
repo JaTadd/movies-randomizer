@@ -38,7 +38,7 @@ jobs:
     - name: Run Backend Integration Tests
       run: |
         cd backend
-        npx jest tests/integration
+        npm test tests/integration
 
     # Frontend Setup and Tests
     - name: Setup Node.js for Frontend
