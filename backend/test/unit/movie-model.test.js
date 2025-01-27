@@ -7,18 +7,23 @@ describe('Movie Model - Search Movies', () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-
-    await Movie.insertMany([
-      { title: 'Inception', genres: ['Sci-Fi'], year: 2010},
-      { title: 'Interstellar', genres: ['Sci-Fi'], year: 2014}
-    ]);
   });
 
   afterAll(async () => {
+    await mongoose.connection.dropDatabase(); // Nettoie la base de test.
     await mongoose.connection.close();
   });
 
+  afterEach(async () => {
+    await Movie.deleteMany(); // Supprime les films après chaque test.
+  });
+
   it('should find movies matching the title', async () => {
+    await Movie.insertMany([
+      { title: 'Inception', genres: ['Sci-Fi'], year: 2010 },
+      { title: 'Interstellar', genres: ['Sci-Fi'], year: 2014 },
+    ]);
+
     const movies = await Movie.find({ title: /Inception/i });
     expect(movies).toHaveLength(1);
     expect(movies[0].title).toBe('Inception');
