@@ -17,6 +17,7 @@
     "test:integration": "for file in test/integration/*.js; do node $file || exit 1; done"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
