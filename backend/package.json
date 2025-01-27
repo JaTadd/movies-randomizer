@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "jest"
+    "test:integration": "node tests/integration"
   },
   "devDependencies": {
     "jest": "^29.7.0"
