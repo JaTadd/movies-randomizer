@@ -20,6 +20,10 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    env:
+      MONGO_URI: mongodb://localhost:27017/movieDB
+      PORT: 5000
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -34,6 +38,11 @@ jobs:
       run: |
         cd backend
         npm install
+
+    - name: Seed the Database
+      run: |
+        cd backend
+        node seed.js
 
     - name: Run Backend Integration Tests
       run: |
