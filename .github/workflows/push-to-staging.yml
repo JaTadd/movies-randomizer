@@ -19,8 +19,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+          git config user.name "JaTadd"
+          git config user.email "jean-alexis.taddei@efrei.net"
 
       - name: Checkout staging branch
         run: |
