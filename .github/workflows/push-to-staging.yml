@@ -33,5 +33,7 @@ jobs:
           git commit -m "Resolve conflicts by accepting dev changes" || true
 
       - name: Push to staging
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git push origin staging
+          git push https://$GH_PAT@github.com/JaTadd/movies-randomizer.git staging
