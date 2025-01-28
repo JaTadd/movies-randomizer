@@ -29,7 +29,9 @@ jobs:
       - name: Merge dev into staging (resolve conflicts)
         run: |
           git merge origin/dev --allow-unrelated-histories --no-edit || true
-          git commit -m "Auto-merge dev into staging" || true
+          git merge --strategy-option theirs || true # Accepte tous les changements de dev
+          git add .
+          git commit -m "Resolved conflicts and merged dev into staging" || true
 
       - name: Push to staging
         env:
