@@ -24,7 +24,7 @@ app.use(cors());
 // Sélection de l'URI MongoDB en fonction de l'environnement
 const mongoURI = process.env.NODE_ENV === "test" ? process.env.MONGO_URI_TEST : process.env.MONGO_URI;
 
-console.log(`🔍 Connecting to MongoDB: ${mongoURI}`);
+console.log(`Connecting to MongoDB: ${mongoURI}`);
 
 // Connexion unique à MongoDB 
 mongoose.set("strictQuery", true);
@@ -36,7 +36,7 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie"))
   .catch((err) => console.error("Erreur de connexion à MongoDB :", err));
 
-// ✅ Ajout d'un garde-fou pour éviter la suppression de la base en ligne
+// Ajout d'un garde-fou pour éviter la suppression de la base en ligne
 if (process.env.NODE_ENV !== "test") {
   console.warn("ATTENTION: Vous êtes connecté à la base de production !");
 }
