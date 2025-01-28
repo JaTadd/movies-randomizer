@@ -9,11 +9,14 @@ const { PythonShell } = require('python-shell');
 const path = require('path');
 
 
+<<<<<<< HEAD
 const modelPath = path.resolve(__dirname, '../ml_models/content_based_model.pkl');
 const tfidfPath = path.resolve(__dirname, '../ml_models/tfidf_vectorizer.pkl');
 
 
 
+=======
+>>>>>>> origin/dev
 // Route pour chercher des films
 router.get('/search', async (req, res) => {
   const { title } = req.query;
@@ -181,6 +184,7 @@ router.get('/all-movies', async (req, res) => {
 });
 
 
+<<<<<<< HEAD
 router.get('/recommendations', auth, async (req, res) => {
   try {
     const userId = req.userId;
@@ -191,10 +195,24 @@ router.get('/recommendations', auth, async (req, res) => {
 
     if (!watchedMovies || watchedMovies.length === 0) {
       return res.status(400).json({ message: 'Ajoutez un film pour avoir des recommandations' });
+=======
+const modelPath = path.resolve(__dirname, "../ml_models/content_based_model.pkl");
+const tfidfPath = path.resolve(__dirname, "../ml_models/tfidf_vectorizer.pkl");
+
+router.get("/recommendations", auth, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId).populate("watchedMovies");
+    const watchedMovies = user.watchedMovies;
+
+    if (!watchedMovies || watchedMovies.length === 0) {
+      return res.status(400).json({ message: "Ajoutez un film pour avoir des recommandations" });
+>>>>>>> origin/dev
     }
 
     // Préparer les titres des films vus
     const watchedTitles = watchedMovies.map((movie) => movie.title);
+<<<<<<< HEAD
 
     // Appeler le script Python pour générer des recommandations
     const options = {
@@ -218,6 +236,52 @@ router.get('/recommendations', auth, async (req, res) => {
   } catch (err) {
     console.error('Erreur dans la route /recommendations :', err);
     res.status(500).json({ message: 'Erreur interne du serveur.' });
+=======
+    console.log("Films vus par l'utilisateur :", watchedTitles);
+
+    // Vérifier si les fichiers modèles existent
+    const fs = require("fs");
+    if (!fs.existsSync(modelPath) || !fs.existsSync(tfidfPath)) {
+      return res.status(500).json({ message: "Fichiers de modèle manquants." });
+    }
+
+    console.log("Modèle chargé :", modelPath);
+    console.log("TF-IDF chargé :", tfidfPath);
+
+    // Exécuter le script Python
+    let options = {
+      mode: "text",
+      pythonOptions: ["-u"], // '-u' pour désactiver le buffering
+      args: [JSON.stringify(watchedTitles), modelPath, tfidfPath],
+    };
+
+    console.log("Exécution du script Python...");
+    PythonShell.run("./ml_models/recommendation_script.py", options, (err, results) => {
+      if (err) {
+        console.error("Erreur Python :", err);
+        return res.status(500).json({ message: "Erreur lors de la génération des recommandations.", error: err.message });
+      }
+
+      console.log("Sortie brute du script Python :", results);
+
+      try {
+        // Vérifier si la sortie est valide
+        if (!results || results.length === 0) {
+          throw new Error("Aucune donnée renvoyée par le script Python");
+        }
+
+        const recommendations = JSON.parse(results.join(""));
+        console.log("Recommandations générées :", recommendations);
+        res.json({ recommendations });
+      } catch (parseError) {
+        console.error("Erreur lors du parsing JSON :", parseError);
+        res.status(500).json({ message: "Réponse invalide du modèle.", error: parseError.message });
+      }
+    });
+  } catch (err) {
+    console.error(" Erreur serveur :", err);
+    res.status(500).json({ message: "Erreur interne du serveur.", error: err.message });
+>>>>>>> origin/dev
   }
 });
 

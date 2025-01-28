@@ -4,6 +4,7 @@ rgqer
 ge
 rgqerth(rt)
 a
+<<<<<<< HEAD
 b
 testpush dev234
 <<<<<<< HEAD
@@ -14,4 +15,6 @@ test2
 >>>>>>> origin/dev
 =======
 test2
+>>>>>>> origin/dev
+=======
 >>>>>>> origin/dev
