@@ -29,7 +29,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Setup and build backend
     - name: Setup Node.js for Backend
       uses: actions/setup-node@v3
       with:
