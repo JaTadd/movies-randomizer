@@ -6,4 +6,12 @@ rgqerth(rt)
 a
 b
 testpush dev234
+<<<<<<< HEAD
+<<<<<<< HEAD
 test for master
+=======
+test2
+>>>>>>> origin/dev
+=======
+test2
+>>>>>>> origin/dev
