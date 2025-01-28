@@ -12,9 +12,11 @@
     "python-shell": "^5.0.0",
     "socket.io": "^4.7.5"
   },
-  "scripts": {
-    "start": "node server.js",
-    "test:integration": "jest test/integration"
+"scripts": {
+  "start": "node server.js",
+  "test:unit": "jest test/unit",
+  "test:integration": "jest test/integration",
+  "test:e2e": "jest test/e2e/routesadd.test.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",

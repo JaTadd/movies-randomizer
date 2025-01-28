@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CardSearch from "../components/CardSearch";
@@ -10,28 +10,9 @@ function SearchMovies() {
   const [watchedMovies, setWatchedMovies] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchWatchedMovies = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const response = await axios.get(
-          "http://localhost:5000/api/movies/profile",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setWatchedMovies(response.data);
-      }
-    };
-    fetchWatchedMovies();
-  }, []);
-
-  useEffect(() => {
-    handleSearch();
-  }, []);
-
-  const handleSearch = async (e) => {
-    if (e) e.preventDefault();
+  // Mémoïriser handleSearch pour éviter les appels inutiles
+  const handleSearch = useCallback(async () => {
+    if (!title) return; // Ne pas faire de requête si le titre est vide
     try {
       const response = await axios.get(
         `http://localhost:5000/api/movies/search?title=${title}`
@@ -39,14 +20,37 @@ function SearchMovies() {
       setMovies(response.data);
     } catch (error) {
       console.error("Error searching for movies:", error);
-      //alert("Error searching for movies");
     }
-  };
+  }, [title]);
+
+  useEffect(() => {
+    const fetchWatchedMovies = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(
+            "http://localhost:5000/api/movies/profile",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setWatchedMovies(response.data);
+        } catch (error) {
+          console.error("Error fetching watched movies:", error);
+        }
+      }
+    };
+    fetchWatchedMovies();
+  }, []);
+
+  useEffect(() => {
+    handleSearch(); // Appelle handleSearch au montage du composant
+  }, [handleSearch]); // Ajoute handleSearch dans les dépendances
 
   const markAsWatched = async (movieId) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      navigate("/login");
       return;
     }
     try {
@@ -56,17 +60,15 @@ function SearchMovies() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies([...watchedMovies, { _id: movieId }]);
-      // alert("Movie marked as watched");
     } catch (error) {
       console.error("Error marking movie as watched:", error);
-      //alert("Error marking movie as watched");
     }
   };
 
   const removeFromWatched = async (movieId) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
+      navigate("/login");
       return;
     }
     try {
@@ -76,17 +78,15 @@ function SearchMovies() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setWatchedMovies(watchedMovies.filter((movie) => movie._id !== movieId));
-      //alert("Movie removed from watched list");
     } catch (error) {
       console.error("Error removing movie from watched list:", error);
-      //alert("Error removing movie from watched list");
     }
   };
 
   return (
     <div className="search-movies-container">
       <h1>Search Movies</h1>
-      <form onSubmit={handleSearch} className="search-form">
+      <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="search-form">
         <input
           type="text"
           value={title}
