@@ -16,7 +16,7 @@
   "start": "node server.js",
   "test:unit": "jest test/unit",
   "test:integration": "jest test/integration",
-  "test:e2e": "jest test/e2e"
+  "test:e2e": "jest test/e2e/randomizer_newuser.test.js"
   },
   "devDependencies": {
     "jest": "^29.7.0",
