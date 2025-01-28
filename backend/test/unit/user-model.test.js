@@ -1,23 +1,27 @@
 const mongoose = require('mongoose');
 const User = require('../../models/User');
+const { app, server } = require('../../server'); // Importer app et server
+
+// Démarrage du serveur pour les tests
+beforeAll((done) => {
+  server.listen(0, () => {
+    console.log(`Test server started on port ${server.address().port}`);
+    done();
+  });
+});
+
+afterAll(async () => {
+  // Nettoyage et arrêt
+  await mongoose.connection.close();
+  await new Promise((resolve) => server.close(resolve));
+  console.log('Test server stopped');
+});
+
+afterEach(async () => {
+  await User.deleteMany(); // Supprime tous les utilisateurs après chaque test
+});
 
 describe('User Model - Add User', () => {
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.dropDatabase(); // Nettoie la base après les tests.
-    await mongoose.connection.close();
-  });
-
-  afterEach(async () => {
-    await User.deleteMany(); // Supprime les utilisateurs après chaque test.
-  });
-
   it('should save a user with valid fields', async () => {
     const user = new User({
       username: 'testuser',
@@ -29,6 +33,7 @@ describe('User Model - Add User', () => {
 
     expect(savedUser._id).toBeDefined();
     expect(savedUser.username).toBe('testuser');
+    expect(savedUser.email).toBe('test@example.com');
     expect(savedUser.isAdmin).toBe(false);
   });
 
@@ -38,14 +43,16 @@ describe('User Model - Add User', () => {
       email: 'duplicate@example.com',
       password: 'password123',
     });
-    await user1.save();
 
     const user2 = new User({
       username: 'user2',
       email: 'duplicate@example.com',
-      password: 'password456',
+      password: 'password123',
     });
 
-    await expect(user2.save()).rejects.toThrow(); // Vérifie que l'erreur est levée.
+    await user1.save();
+    await expect(user2.save()).rejects.toThrow(
+      /E11000 duplicate key error collection/
+    );
   });
 });

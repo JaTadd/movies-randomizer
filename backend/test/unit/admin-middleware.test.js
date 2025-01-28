@@ -1,4 +1,4 @@
-const admin = require('../../backend/middleware/admin');
+const admin = require('../../middleware/admin');
 
 describe('Admin Middleware', () => {
   it('should deny access if user is not an admin', () => {

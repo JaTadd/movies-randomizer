@@ -1,23 +1,27 @@
 const mongoose = require('mongoose');
-const Movie = require('../../backend/models/Movie');
+const Movie = require('../../models/Movie');
+const { app, server } = require('../../server'); // Importer app et server
+
+// Démarrage du serveur pour les tests
+beforeAll((done) => {
+  server.listen(0, () => { 
+    console.log(`Test server started on port ${server.address().port}`);
+    done();
+  });
+});
+
+afterAll(async () => {
+  // Nettoyage et arrêt
+  await mongoose.connection.close(); 
+  await new Promise((resolve) => server.close(resolve));
+  console.log('Test server stopped');
+});
+
+afterEach(async () => {
+  await Movie.deleteMany(); // Supprime tous les films après chaque test
+});
 
 describe('Movie Model - Search Movies', () => {
-  beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI_TEST, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-  });
-
-  afterAll(async () => {
-    await mongoose.connection.dropDatabase(); // Nettoie la base de test.
-    await mongoose.connection.close();
-  });
-
-  afterEach(async () => {
-    await Movie.deleteMany(); // Supprime les films après chaque test.
-  });
-
   it('should find movies matching the title', async () => {
     await Movie.insertMany([
       { title: 'Inception', genres: ['Sci-Fi'], year: 2010 },
