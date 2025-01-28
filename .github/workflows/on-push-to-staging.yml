@@ -1,4 +1,4 @@
-name: Push to Production (Main)
+name: Push to Production
 
 on:
   push:
@@ -85,6 +85,6 @@ jobs:
     - name: Push to Main
       if: success()
       run: |
-        git checkout main || git checkout -b main
+        git checkout master || git checkout -b master
         git merge staging --no-ff --allow-unrelated-histories -m "Merge staging into production"
-        git push origin main
+        git push origin master
