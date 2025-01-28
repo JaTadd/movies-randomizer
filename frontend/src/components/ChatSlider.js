@@ -1,5 +1,5 @@
 // src/components/ChatSlider.js
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Drawer } from "@mui/material";
 import { FaComments } from "react-icons/fa";
 import ChatRoom from "./ChatRoom"; // Assurez-vous que le chemin est correct
