@@ -1,0 +1,27 @@
+name: Build and Push to Docker Hub
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "dckr_pat_Sth6o2izpCYS3C1hDCe9xgPcqFU" | docker login -u "jaltaddei" --password-stdin
+
+      - name: Build and push Backend image
+        run: |
+          docker build -t jaltaddei/backend ./backend
+          docker push jaltaddei/backend
+
+      - name: Build and push Frontend image
+        run: |
+          docker build -t jaltaddei/frontend ./frontend
+          docker push jaltaddei/frontend

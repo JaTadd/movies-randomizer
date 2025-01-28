@@ -1,0 +1,88 @@
+name: Push to Production
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      MONGO_URI: mongodb://localhost:27017/movieDB
+      PORT: 5000
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js for Backend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies for Backend
+      run: |
+        cd backend
+        npm install
+
+    - name: Seed the Database
+      run: |
+        cd backend
+        node seed.js
+
+    - name: Run Backend Integration Tests
+      run: |
+        cd backend
+        npm run test:integration
+
+    - name: Run Backend Unit Tests
+      run: |
+        cd backend
+        npm run test:unit
+
+    - name: Run Backend E2E Tests
+      run: |
+        cd backend
+        npm run test:e2e
+
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install dependencies for Frontend
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Start Frontend
+      run: |
+        cd frontend
+        npm start &
+
+    # Step 4: Push to production (main) branch
+    - name: Push to Main
+      if: success()
+      run: |
+        git checkout master || git checkout -b master
+        git merge staging --no-ff --allow-unrelated-histories -m "Merge staging into production"
+        git push origin master
