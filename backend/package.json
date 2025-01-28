@@ -12,9 +12,10 @@
     "python-shell": "^5.0.0",
     "socket.io": "^4.7.5"
   },
-  "scripts": {
-    "start": "node server.js",
-    "test:integration": "jest test/integration"
+"scripts": {
+  "test:unit": "jest tests/unit",
+  "test:integration": "jest tests/integration",
+  "test:e2e": "jest tests/e2e"
   },
   "devDependencies": {
     "jest": "^29.7.0",
