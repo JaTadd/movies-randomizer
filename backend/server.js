@@ -21,10 +21,13 @@ const io = socketIo(server, {
 app.use(express.json());
 app.use(cors());
 
-// Connexion à la base de données MongoDB Atlas
-const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/movieDB"; // Fallback pour dev local
+// Sélection de l'URI MongoDB en fonction de l'environnement
+const mongoURI = process.env.NODE_ENV === "test" ? process.env.MONGO_URI_TEST : process.env.MONGO_URI;
 
-mongoose.set('strictQuery', true);
+console.log(`🔍 Connecting to MongoDB: ${mongoURI}`);
+
+// Connexion unique à MongoDB 
+mongoose.set("strictQuery", true);
 mongoose
   .connect(mongoURI, {
     useNewUrlParser: true,
@@ -32,6 +35,11 @@ mongoose
   })
   .then(() => console.log("Connexion à MongoDB réussie"))
   .catch((err) => console.error("Erreur de connexion à MongoDB :", err));
+
+// ✅ Ajout d'un garde-fou pour éviter la suppression de la base en ligne
+if (process.env.NODE_ENV !== "test") {
+  console.warn("ATTENTION: Vous êtes connecté à la base de production !");
+}
 
 // Utilisation des routes
 app.use("/api/users", userRoutes);

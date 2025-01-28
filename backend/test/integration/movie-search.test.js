@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Movie = require('../../models/Movie');
 const { app, server } = require('../../server'); // Importer app et server
+require('dotenv').config();
+console.log('MONGO_URI_TEST:', process.env.MONGO_URI_TEST);
 
 // Nettoyage global avant tous les tests
 beforeAll(async () => {

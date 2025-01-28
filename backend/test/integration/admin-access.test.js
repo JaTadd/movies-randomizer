@@ -2,6 +2,10 @@ const request = require('supertest');
 const { app, server } = require('../../server'); // Importer app et server
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+
+
+console.log('MONGO_URI_TEST:', process.env.MONGO_URI_TEST);
 
 
 beforeAll((done) => {
