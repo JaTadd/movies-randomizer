@@ -1,4 +1,6 @@
 const admin = require('../../middleware/admin');
+require('dotenv').config();
+console.log('MONGO_URI_TEST:', process.env.MONGO_URI_TEST);
 
 describe('Admin Middleware', () => {
   it('should deny access if user is not an admin', () => {

@@ -3,7 +3,9 @@ const request = require('supertest');
 const { app, server } = require('../../server');
 const mongoose = require('mongoose');
 const User = require('../../models/User'); 
+require('dotenv').config();
 
+console.log('MONGO_URI_TEST:', process.env.MONGO_URI_TEST);
 
 beforeEach(async () => {
   await User.deleteMany({});
