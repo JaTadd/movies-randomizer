@@ -14,26 +14,25 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Fetch all branches
-        run: |
-          git fetch origin
+        run: git fetch --all
 
       - name: Configure Git
         run: |
-          git config user.name "JaTadd"
-          git config user.email "jean-alexis.taddei@efrei.net"
+          git config --global user.name "JaTadd"
+          git config --global user.email "jean-alexis.taddei@efrei.net"
 
       - name: Checkout staging branch
         run: |
           git checkout staging || git checkout -b staging
+          git pull origin staging || true
 
       - name: Merge dev into staging (resolve conflicts)
         run: |
-          git merge origin/dev --allow-unrelated-histories || true
-          git merge --strategy-option theirs || true # Accepte tous les changements de dev
-          git commit -m "Resolve conflicts by accepting dev changes" || true
+          git merge origin/dev --no-edit || true
+          git commit -m "Auto-merge dev into staging" || true
 
       - name: Push to staging
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git push https://$GH_PAT@github.com/JaTadd/movies-randomizer.git staging
+          git push https://$GH_PAT@github.com/JaTadd/movies-randomizer.git staging --force
