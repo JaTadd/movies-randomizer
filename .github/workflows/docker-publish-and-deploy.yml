@@ -18,12 +18,10 @@ jobs:
 
       - name: Build and push Backend image
         run: |
-          docker build -t <dockerhub-username>/backend ./backend
-          docker push <dockerhub-username>/backend
+          docker build -t jaltaddei/backend ./backend
+          docker push jaltaddei/backend
 
       - name: Build and push Frontend image
         run: |
-          docker build -t <dockerhub-username>/frontend ./frontend
-          docker push <dockerhub-username>/frontend
-
-
+          docker build -t jaltaddei/frontend ./frontend
+          docker push jaltaddei/frontend
