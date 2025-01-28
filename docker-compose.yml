@@ -8,6 +8,10 @@ services:
     ports:
       - "5000:5000"
     environment:
+<<<<<<< HEAD
+=======
+      - NODE_ENV=production
+>>>>>>> origin/dev
       - MONGO_URI=mongodb+srv://jeanalexistaddei:3AtAGveoDeHmxqNv@targetdummybdd.4jjdl.mongodb.net/MovieRandomizer?retryWrites=true&w=majority
     depends_on:
       - frontend
